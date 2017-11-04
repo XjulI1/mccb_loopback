@@ -34,5 +34,21 @@
   "Role": {
     "dataSource": "db",
     "public": false
+  },
+  "Categorie": {
+    "dataSource": "mccb_mysql",
+    "public": true
+  },
+  "Compte": {
+    "dataSource": "mccb_mysql",
+    "public": true
+  },
+  "Operation": {
+    "dataSource": "mccb_mysql",
+    "public": true
+  },
+  "OperationRecurrente": {
+    "dataSource": "mccb_mysql",
+    "public": true
   }
 }
