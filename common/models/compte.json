@@ -1,0 +1,43 @@
+{
+  "name": "Compte",
+  "plural": "Comptes",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "IDcompte": {
+      "type": "number",
+      "id": true
+    },
+    "NomCompte": {
+      "type": "string",
+      "required": true
+    },
+    "solde": {
+      "type": "number",
+      "required": true
+    },
+    "IDuser": {
+      "type": "number",
+      "required": true
+    },
+    "bloque": {
+      "type": "boolean",
+      "default": false
+    },
+    "porte_feuille": {
+      "type": "boolean",
+      "default": false
+    },
+    "visible": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

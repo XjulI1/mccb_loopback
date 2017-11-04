@@ -1,0 +1,31 @@
+{
+  "name": "Categorie",
+  "plural": "Categories",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": false
+  },
+  "properties": {
+    "IDcat": {
+      "type": "number",
+      "id": true
+    },
+    "Nom": {
+      "type": "string",
+      "required": true
+    },
+    "IDuser": {
+      "type": "number",
+      "required": true
+    },
+    "Stats": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

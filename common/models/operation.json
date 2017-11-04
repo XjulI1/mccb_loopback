@@ -1,0 +1,43 @@
+{
+  "name": "Operation",
+  "plural": "Operations",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "IDop": {
+      "type": "number",
+      "id": true
+    },
+    "NomOp": {
+      "type": "string",
+      "required": true
+    },
+    "MontantOp": {
+      "type": "number",
+      "required": true
+    },
+    "DateOp": {
+      "type": "date",
+      "required": true
+    },
+    "CheckOp": {
+      "type": "boolean",
+      "default": false
+    },
+    "IDcompte": {
+      "type": "number",
+      "required": true
+    },
+    "IDcat": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

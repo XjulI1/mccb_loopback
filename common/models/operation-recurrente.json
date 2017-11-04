@@ -1,0 +1,55 @@
+{
+  "name": "OperationRecurrente",
+  "plural": "OperationRecurrentes",
+  "base": "PersistedModel",
+  "idInjection": false,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "IDopRecu": {
+      "type": "number",
+      "id": true
+    },
+    "NomOpRecu": {
+      "type": "string",
+      "required": true
+    },
+    "MontantOpRecu": {
+      "type": "number",
+      "required": true
+    },
+    "JourOpRecu": {
+      "type": "number",
+      "required": true
+    },
+    "JourNumOpRecu": {
+      "type": "number",
+      "default": 1
+    },
+    "MoisOpRecu": {
+      "type": "number",
+      "default": 1
+    },
+    "Frequence": {
+      "type": "number",
+      "default": 3
+    },
+    "DernierDateOpRecu": {
+      "type": "date",
+      "required": true
+    },
+    "IDcompte": {
+      "type": "number",
+      "required": true
+    },
+    "IDcat": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
