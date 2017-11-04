@@ -16,5 +16,5 @@ deployment:
   production:
     branch: master
     commands:
-      - "pm2 deploy pm2.json production"
+      - "pm2 deploy pm2.json production --force"
 
