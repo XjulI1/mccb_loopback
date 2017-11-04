@@ -14,7 +14,7 @@
     ]
   },
   "User": {
-    "dataSource": "db"
+    "dataSource": "mccb_mysql"
   },
   "AccessToken": {
     "dataSource": "db",
