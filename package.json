@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "start": "node .",
     "test": "echo 0",
-    "posttest": "npm run lint && nsp check"
+    "posttest": "npm run lint"
   },
   "dependencies": {
     "compression": "^1.0.3",
