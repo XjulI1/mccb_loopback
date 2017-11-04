@@ -1,0 +1,20 @@
+## Customize the test machine
+machine:
+  timezone:
+    Europe/Paris
+
+  # Version of node to use
+  node:
+    version:
+      8.2.1
+
+dependencies:
+  pre:
+    - npm install pm2
+
+deployment:
+  production:
+    branch: master
+    commands:
+      - "pm2 deploy pm2.json production"
+

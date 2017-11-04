@@ -1,0 +1,22 @@
+{
+  "apps": [
+    {
+      "name": "mccb_loopback",
+      "script": "server/server.js",
+      "env_production": {
+        "NODE_ENV": "production"
+      }
+    }
+  ],
+  "deploy": {
+    "production": {
+      "user": "deploy",
+      "host": "xavierjulien.fr",
+      "port": "2200",
+      "ref": "origin/master",
+      "repo": "https://github.com/XjulI1/mccb_loopback.git",
+      "path": "/volume2/web/mccb_ng/loopback/",
+      "post-deploy": "PATH=$PATH:/usr/local/bin:/opt/bin; npm install && pm2 startOrRestart pm2.json --env production"
+    }
+  }
+}
