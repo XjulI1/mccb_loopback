@@ -50,5 +50,9 @@
   "OperationRecurrente": {
     "dataSource": "mccb_mysql",
     "public": true
+  },
+  "whisky": {
+    "dataSource": "steaking",
+    "public": true
   }
 }
