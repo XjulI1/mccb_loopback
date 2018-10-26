@@ -1,3 +1,11 @@
 {
-  "extends": "loopback"
+  "extends": "loopback",
+  "rules": {
+    "max-len": [
+      "error",
+      {
+        "code": 120
+      }
+    ]
+  }
 }
