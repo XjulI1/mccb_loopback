@@ -5,6 +5,8 @@ var boot = require('loopback-boot');
 
 var app = module.exports = loopback();
 
+let n26 = require('../common/daemon/n26');
+
 app.start = function() {
   // start the web server
   return app.listen(function() {
@@ -15,6 +17,8 @@ app.start = function() {
       var explorerPath = app.get('loopback-component-explorer').mountPath;
       console.log('Browse your REST API at %s%s', baseUrl, explorerPath);
     }
+
+    n26.startDaemon();
   });
 };
 
