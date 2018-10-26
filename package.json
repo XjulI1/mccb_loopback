@@ -8,6 +8,7 @@
   "scripts": {
     "lint": "eslint .",
     "start": "node .",
+    "start:reload": "nodemon .",
     "test": "echo 0",
     "posttest": "npm run lint"
   },
