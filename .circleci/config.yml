@@ -1,0 +1,65 @@
+version: 2
+
+defaults: &defaults
+  working_directory: /tmp/workspace
+  environment:
+    TZ: "/usr/share/zoneinfo/Europe/Paris"
+    NODE_ENV: test
+  docker:
+    - image: circleci/node:8.2.1-stretch
+
+jobs:
+  dependencies:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - yarn-modules-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install Dependencies
+          command: yarn install
+      - run:
+          name: Install pm2
+          command: yarn add pm2
+      - save_cache:
+          key: yarn-modules-{{ checksum "yarn.lock" }}
+          paths:
+            - "node_modules"
+      - persist_to_workspace:
+          root: /tmp
+          paths:
+            - workspace
+
+  test:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: /tmp
+      - run: yarn test
+
+  deploy:
+    <<: *defaults
+    environment:
+      NODE_ENV: production
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - deploy:
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              pm2 deploy pm2.json production --force
+            fi
+
+workflows:
+  version: 2
+
+  mccb_front:
+    jobs:
+      - dependencies
+      - test:
+          requires:
+            - dependencies
+      - deploy:
+          requires:
+            - test
