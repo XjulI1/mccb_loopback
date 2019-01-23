@@ -54,7 +54,7 @@ jobs:
 workflows:
   version: 2
 
-  mccb_front:
+  mccb_loopback:
     jobs:
       - dependencies
       - test:
