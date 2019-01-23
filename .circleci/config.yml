@@ -44,7 +44,7 @@ jobs:
           at: /tmp/workspace
       - run:
           name: Install pm2
-          command: npm install -g pm2
+          command: npm install pm2
       - deploy:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
