@@ -41,7 +41,7 @@ jobs:
       NODE_ENV: production
     steps:
       - attach_workspace:
-          at: /tmp/workspace
+          at: /tmp
       - deploy:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
