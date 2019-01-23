@@ -13,6 +13,7 @@
       "user": "deploy",
       "host": "xavierjulien.fr",
       "port": "2200",
+      "ssh_options": "StrictHostKeyChecking=no",
       "ref": "origin/master",
       "repo": "https://github.com/XjulI1/mccb_loopback.git",
       "path": "/volume2/web/mccb_ng/loopback/",
