@@ -42,13 +42,10 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp/workspace
-      - run:
-          name: Install pm2
-          command: npm install pm2
       - deploy:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              pm2 deploy pm2.json production --force
+              yarn deploy
             fi
 
 workflows:
