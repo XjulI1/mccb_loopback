@@ -60,7 +60,7 @@ module.exports = function(Operation) {
       'AND "' + (MonthNumber === 12 ? YearNumber + 1 : YearNumber) + '-' + (MonthNumber === 12 ? 1 : MonthNumber + 1) + '-01" ' +
       'AND Compte.IDuser = ' + UserID + ' ' +
       'AND MontantOp ' + signMontant + ' 0 ' +
-      'AND IDcat NOT IN(25, 21) ';
+      'AND IDcat NOT IN(25, 21, 50) ';
 
     if (IDCompte) {
       SQLrequest += 'AND IDCompte = ' + IDCompte;
