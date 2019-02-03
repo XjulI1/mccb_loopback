@@ -47,6 +47,24 @@ module.exports = function(Operation) {
     });
   };
 
+  Operation.sumByUserByMonth = function(UserID, MonthNumber, YearNumber, cb) {
+    let signMontant = '<';
+
+    let SQLrequest = 'SELECT ROUND(SUM(MontantOp), 2) as MonthNegative ' +
+      'FROM Operation ' +
+      'NATURAL JOIN Compte ' +
+      'WHERE DateOp ' +
+      'BETWEEN "' + YearNumber + '-' + MonthNumber + '-01" ' +
+      'AND "' + YearNumber + '-' + (MonthNumber + 1) + '-01" ' +
+      'AND Compte.IDuser = ' + UserID + ' ' +
+      'AND MontantOp ' + signMontant + ' 0 ' +
+      'AND IDcat != 25';
+
+    Operation.dataSource.connector.executeSQL(SQLrequest, [], [], (err, data) => {
+      cb(null, data);
+    });
+  };
+
   Operation.remoteMethod('sumForACompte', {
     accepts: {arg: 'id', type: 'number'},
     returns: {arg: 'results', type: 'object'},
@@ -57,6 +75,23 @@ module.exports = function(Operation) {
 
   Operation.remoteMethod('sumAllCompteForUser', {
     accepts: {arg: 'userID', type: 'number'},
+    returns: {arg: 'results', type: 'object'},
+    http: {
+      verb: 'get',
+    },
+  });
+
+  Operation.remoteMethod('sumByUserByMonth', {
+    accepts: [{
+      arg: 'userID',
+      type: 'number',
+    }, {
+      arg: 'monthNumber',
+      type: 'number',
+    }, {
+      arg: 'yearNumber',
+      type: 'number',
+    }],
     returns: {arg: 'results', type: 'object'},
     http: {
       verb: 'get',
