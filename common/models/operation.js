@@ -1,5 +1,7 @@
 'use strict';
 
+/* eslint max-len: "off" */
+
 module.exports = function(Operation) {
   Operation.sumForACompte = function(CompteID, cb) {
     const sqlChecked = 'SELECT IDCompte, SUM(MontantOp) as TotalChecked ' +
@@ -47,7 +49,7 @@ module.exports = function(Operation) {
     });
   };
 
-  Operation.sumByUserByMonth = function(UserID, MonthNumber, YearNumber, cb) {
+  Operation.sumByUserByMonth = function(UserID, MonthNumber, YearNumber, IDCompte, cb) {
     let signMontant = '<';
 
     let SQLrequest = 'SELECT ROUND(SUM(MontantOp), 2) as MonthNegative ' +
@@ -55,10 +57,14 @@ module.exports = function(Operation) {
       'NATURAL JOIN Compte ' +
       'WHERE DateOp ' +
       'BETWEEN "' + YearNumber + '-' + MonthNumber + '-01" ' +
-      'AND "' + YearNumber + '-' + (MonthNumber + 1) + '-01" ' +
+      'AND "' + (MonthNumber === 12 ? YearNumber + 1 : YearNumber) + '-' + (MonthNumber === 12 ? 1 : MonthNumber + 1) + '-01" ' +
       'AND Compte.IDuser = ' + UserID + ' ' +
       'AND MontantOp ' + signMontant + ' 0 ' +
-      'AND IDcat != 25';
+      'AND IDcat NOT IN(25, 21) ';
+
+    if (IDCompte) {
+      SQLrequest += 'AND IDCompte = ' + IDCompte;
+    }
 
     Operation.dataSource.connector.executeSQL(SQLrequest, [], [], (err, data) => {
       cb(null, data);
@@ -90,6 +96,9 @@ module.exports = function(Operation) {
       type: 'number',
     }, {
       arg: 'yearNumber',
+      type: 'number',
+    }, {
+      arg: 'IDCompte',
       type: 'number',
     }],
     returns: {arg: 'results', type: 'object'},
