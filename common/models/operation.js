@@ -50,8 +50,6 @@ module.exports = function(Operation) {
   };
 
   Operation.sumByUserByMonth = function(UserID, MonthNumber, YearNumber, IDCompte, cb) {
-    let signMontant = '<';
-
     let SQLrequest = 'SELECT ROUND(SUM(MontantOp), 2) as MonthNegative ' +
       'FROM Operation ' +
       'NATURAL JOIN Compte ' +
@@ -59,12 +57,30 @@ module.exports = function(Operation) {
       'BETWEEN "' + YearNumber + '-' + MonthNumber + '-01" ' +
       'AND "' + (MonthNumber === 12 ? YearNumber + 1 : YearNumber) + '-' + (MonthNumber === 12 ? 1 : MonthNumber + 1) + '-01" ' +
       'AND Compte.IDuser = ' + UserID + ' ' +
-      'AND MontantOp ' + signMontant + ' 0 ' +
+      'AND MontantOp < 0 ' +
       'AND IDcat NOT IN(25, 21, 50) ';
 
     if (IDCompte) {
       SQLrequest += 'AND IDCompte = ' + IDCompte;
     }
+
+    Operation.dataSource.connector.executeSQL(SQLrequest, [], [], (err, data) => {
+      cb(null, data);
+    });
+  };
+
+  Operation.sumCategoriesByUserByMonth = function(UserID, MonthNumber, YearNumber, cb) {
+    let SQLrequest = 'SELECT ROUND(SUM(MontantOp), 2) as TotalMonth, IDcat ' +
+      'FROM Operation ' +
+      'NATURAL JOIN Compte ' +
+      'WHERE DateOp ' +
+      'BETWEEN "' + YearNumber + '-' + MonthNumber + '-01" ' +
+      'AND "' + (MonthNumber === 12 ? YearNumber + 1 : YearNumber) + '-' + (MonthNumber === 12 ? 1 : MonthNumber + 1) + '-01" ' +
+      'AND Compte.IDuser = ' + UserID + ' ' +
+      'AND MontantOp < 0 ' +
+      'AND IDcat IN ' +
+      '(SELECT IDcat FROM Categorie WHERE Stats = 1 AND IDuser IN (0, ' + UserID + ')) ' +
+      'GROUP BY IDcat';
 
     Operation.dataSource.connector.executeSQL(SQLrequest, [], [], (err, data) => {
       cb(null, data);
@@ -99,6 +115,23 @@ module.exports = function(Operation) {
       type: 'number',
     }, {
       arg: 'IDCompte',
+      type: 'number',
+    }],
+    returns: {arg: 'results', type: 'object'},
+    http: {
+      verb: 'get',
+    },
+  });
+
+  Operation.remoteMethod('sumCategoriesByUserByMonth', {
+    accepts: [{
+      arg: 'userID',
+      type: 'number',
+    }, {
+      arg: 'monthNumber',
+      type: 'number',
+    }, {
+      arg: 'yearNumber',
       type: 'number',
     }],
     returns: {arg: 'results', type: 'object'},
