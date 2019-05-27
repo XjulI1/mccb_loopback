@@ -1,10 +1,16 @@
-'use strict'
+'use strict';
 
-module.exports = function (Stats) {
-  Stats.evolutionSolde = function (UserID, cb) {
-    const querySoldeTotal = 'SELECT ROUND(SUM(solde), 2) AS sum FROM Compte WHERE IDuser = ' + UserID
+module.exports = function(Stats) {
+  Stats.evolutionSolde = function(UserID, cb) {
+    const querySoldeTotal = '' +
+      'SELECT ROUND(SUM(solde), 2) AS sum ' +
+      'FROM Compte ' +
+      'WHERE IDuser = ' + UserID;
 
-    const querySoldeDispo = 'SELECT ROUND(SUM(solde), 2) AS sum FROM Compte WHERE IDuser = ' + UserID + ' AND bloque = 0'
+    const querySoldeDispo = '' +
+      'SELECT ROUND(SUM(solde), 2) AS sum ' +
+      'FROM Compte ' +
+      'WHERE IDuser = ' + UserID + ' AND bloque = 0';
 
     const queryTotal = '' +
       'SELECT ROUND(SUM(MontantOp),2) AS montant, ' +
@@ -12,7 +18,7 @@ module.exports = function (Stats) {
       'FROM Operation NATURAL JOIN Compte ' +
       'WHERE IDuser = ' + UserID + ' ' +
       'GROUP BY date ' +
-      'ORDER BY DateOp ASC'
+      'ORDER BY DateOp ASC';
 
     const queryDispo = '' +
       'SELECT ROUND(SUM(MontantOp),2) AS montant, ' +
@@ -20,7 +26,7 @@ module.exports = function (Stats) {
       'FROM Operation NATURAL JOIN Compte ' +
       'WHERE IDuser = ' + UserID + ' AND bloque = 0 ' +
       'GROUP BY date ' +
-      'ORDER BY DateOp ASC'
+      'ORDER BY DateOp ASC';
 
     Stats.dataSource.connector.executeSQL(querySoldeTotal, [], [], (err, soldeTotal) => {
       Stats.dataSource.connector.executeSQL(querySoldeDispo, [], [], (err, soldeDispo) => {
@@ -30,22 +36,22 @@ module.exports = function (Stats) {
               soldeTotal: soldeTotal[0].sum,
               soldeDispo: soldeDispo[0].sum,
               total: dataTotal,
-              dispo: dataDispo
-            })
-          })
-        })
-      })
-    })
-  }
+              dispo: dataDispo,
+            });
+          });
+        });
+      });
+    });
+  };
 
   Stats.remoteMethod('evolutionSolde', {
     accepts: [{
       arg: 'userID',
-      type: 'number'
+      type: 'number',
     }],
-    returns: { arg: 'results', type: 'object' },
+    returns: {arg: 'results', type: 'object'},
     http: {
-      verb: 'get'
-    }
-  })
-}
+      verb: 'get',
+    },
+  });
+};

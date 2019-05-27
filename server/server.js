@@ -18,7 +18,9 @@ app.start = function() {
       console.log('Browse your REST API at %s%s', baseUrl, explorerPath);
     }
 
-    n26.startDaemon();
+    if (process.env.NODE_ENV === 'production') {
+      n26.startDaemon();
+    }
   });
 };
 
