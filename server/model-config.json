@@ -50,5 +50,9 @@
   "OperationRecurrente": {
     "dataSource": "mccb_mysql",
     "public": true
+  },
+  "Stats": {
+    "dataSource": "mccb_mysql",
+    "public": true
   }
 }
