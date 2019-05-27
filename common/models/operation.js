@@ -57,8 +57,8 @@ module.exports = function(Operation) {
       'BETWEEN "' + YearNumber + '-' + MonthNumber + '-01" ' +
       'AND "' + (MonthNumber === 12 ? YearNumber + 1 : YearNumber) + '-' + (MonthNumber === 12 ? 1 : MonthNumber + 1) + '-01" ' +
       'AND Compte.IDuser = ' + UserID + ' ' +
-      'AND MontantOp < 0 ' +
-      'AND IDcat NOT IN(25, 21, 50) ';
+      'AND IDcat IN ' +
+      '(SELECT IDcat FROM Categorie WHERE Stats = 1 AND IDuser IN (0, ' + UserID + '))';
 
     if (IDCompte) {
       SQLrequest += 'AND IDCompte = ' + IDCompte;
@@ -77,7 +77,6 @@ module.exports = function(Operation) {
       'BETWEEN "' + YearNumber + '-' + MonthNumber + '-01" ' +
       'AND "' + (MonthNumber === 12 ? YearNumber + 1 : YearNumber) + '-' + (MonthNumber === 12 ? 1 : MonthNumber + 1) + '-01" ' +
       'AND Compte.IDuser = ' + UserID + ' ' +
-      'AND MontantOp < 0 ' +
       'AND IDcat IN ' +
       '(SELECT IDcat FROM Categorie WHERE Stats = 1 AND IDuser IN (0, ' + UserID + ')) ' +
       'GROUP BY IDcat';
