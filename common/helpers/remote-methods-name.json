@@ -1,0 +1,21 @@
+{
+  "array": [
+    "deleteById",
+    "updateById",
+    "findById",
+    "headById",
+    "replaceById",
+    "count",
+    "findOne",
+    "replaceOrCreate",
+    "update",
+    "upsertWithWhere",
+    "exists",
+    "createChangeStream",
+    "find",
+    "create",
+    "upsert",
+    "prototype.updateAttributes",
+    "search"
+  ]
+}
