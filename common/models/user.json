@@ -16,16 +16,13 @@
       "required": true
     },
     "warningTotal": {
-      "type": "number",
-      "required": true
+      "type": "number"
     },
     "warningCompte": {
-      "type": "number",
-      "required": true
+      "type": "number"
     },
     "favoris": {
-      "type": "number",
-      "required": true
+      "type": "number"
     },
     "emailVerified": "boolean",
     "verificationToken": "string"
