@@ -25,7 +25,7 @@
       "type": "number"
     },
     "secret_key": {
-      "type": "number"
+      "type": "string"
     },
     "emailVerified": "boolean",
     "verificationToken": "string"
