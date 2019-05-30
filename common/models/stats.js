@@ -18,7 +18,7 @@ module.exports = function(Stats) {
       'FROM Operation NATURAL JOIN Compte ' +
       'WHERE IDuser = ' + UserID + ' ' +
       'GROUP BY date ' +
-      'ORDER BY DateOp ASC';
+      'ORDER BY date ASC';
 
     const queryDispo = '' +
       'SELECT ROUND(SUM(MontantOp),2) AS montant, ' +
@@ -26,7 +26,7 @@ module.exports = function(Stats) {
       'FROM Operation NATURAL JOIN Compte ' +
       'WHERE IDuser = ' + UserID + ' AND bloque = 0 ' +
       'GROUP BY date ' +
-      'ORDER BY DateOp ASC';
+      'ORDER BY date ASC';
 
     Stats.dataSource.connector.executeSQL(querySoldeTotal, [], [], (err, soldeTotal) => {
       Stats.dataSource.connector.executeSQL(querySoldeDispo, [], [], (err, soldeDispo) => {
