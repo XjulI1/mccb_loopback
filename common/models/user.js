@@ -223,7 +223,6 @@ module.exports = function(User) {
     } else {
       include = include.toLowerCase();
     }
-
     self.findOne({where: {id: 1}}, function(err, user) {
       var defaultError = new Error(g.f('login failed'));
       defaultError.statusCode = 401;
