@@ -54,9 +54,5 @@
   "Stats": {
     "dataSource": "mccb_mysql",
     "public": true
-  },
-  "Login": {
-    "dataSource": "db",
-    "public": true
   }
 }

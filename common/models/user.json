@@ -24,6 +24,9 @@
     "favoris": {
       "type": "number"
     },
+    "secret_key": {
+      "type": "number"
+    },
     "emailVerified": "boolean",
     "verificationToken": "string"
   },

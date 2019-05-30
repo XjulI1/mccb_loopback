@@ -1,26 +1,26 @@
-'use strict'
+'use strict';
 
-const remoteMethods = require('../helpers/remote-methods-name')
-const activeMethodExplorer = []
+const remoteMethods = require('../helpers/remote-methods-name');
+const activeMethodExplorer = [];
 
-module.exports = function (Stats) {
-  Stats.evolutionSolde = function (UserID, cb) {
+module.exports = function(Stats) {
+  Stats.evolutionSolde = function(UserID, cb) {
     if (!UserID) {
       cb(null, {
-        message: 'no user ID'
-      })
-      return
+        message: 'no user ID',
+      });
+      return;
     }
 
     const querySoldeTotal = '' +
       'SELECT ROUND(SUM(solde), 2) AS sum ' +
       'FROM Compte ' +
-      'WHERE IDuser = ' + UserID
+      'WHERE IDuser = ' + UserID;
 
     const querySoldeDispo = '' +
       'SELECT ROUND(SUM(solde), 2) AS sum ' +
       'FROM Compte ' +
-      'WHERE IDuser = ' + UserID + ' AND bloque = 0'
+      'WHERE IDuser = ' + UserID + ' AND bloque = 0';
 
     const queryTotal = '' +
       'SELECT ROUND(SUM(MontantOp),2) AS montant, ' +
@@ -28,7 +28,7 @@ module.exports = function (Stats) {
       'FROM Operation NATURAL JOIN Compte ' +
       'WHERE IDuser = ' + UserID + ' ' +
       'GROUP BY date ' +
-      'ORDER BY date ASC'
+      'ORDER BY date ASC';
 
     const queryDispo = '' +
       'SELECT ROUND(SUM(MontantOp),2) AS montant, ' +
@@ -36,7 +36,7 @@ module.exports = function (Stats) {
       'FROM Operation NATURAL JOIN Compte ' +
       'WHERE IDuser = ' + UserID + ' AND bloque = 0 ' +
       'GROUP BY date ' +
-      'ORDER BY date ASC'
+      'ORDER BY date ASC';
 
     Stats.dataSource.connector.executeSQL(querySoldeTotal, [], [], (err, soldeTotal) => {
       Stats.dataSource.connector.executeSQL(querySoldeDispo, [], [], (err, soldeDispo) => {
@@ -46,28 +46,28 @@ module.exports = function (Stats) {
               soldeTotal: soldeTotal[0].sum,
               soldeDispo: soldeDispo[0].sum,
               total: dataTotal,
-              dispo: dataDispo
-            })
-          })
-        })
-      })
-    })
-  }
+              dispo: dataDispo,
+            });
+          });
+        });
+      });
+    });
+  };
 
-  remoteMethods.array.forEach(function (method) {
+  remoteMethods.array.forEach(function(method) {
     if (!activeMethodExplorer.includes(method)) {
-      Stats.disableRemoteMethodByName(method)
+      Stats.disableRemoteMethodByName(method);
     }
-  })
+  });
 
   Stats.remoteMethod('evolutionSolde', {
     accepts: [{
       arg: 'userID',
-      type: 'number'
+      type: 'number',
     }],
-    returns: { arg: 'results', type: 'object' },
+    returns: {arg: 'results', type: 'object'},
     http: {
-      verb: 'get'
-    }
-  })
-}
+      verb: 'get',
+    },
+  });
+};

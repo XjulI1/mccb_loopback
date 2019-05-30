@@ -7,6 +7,8 @@
  * Module Dependencies.
  */
 
+/* eslint max-len: "off" */
+
 'use strict';
 var g = require('loopback/lib/globalize.js');
 var isEmail = require('isemail');
@@ -222,32 +224,7 @@ module.exports = function(User) {
       include = include.toLowerCase();
     }
 
-    var realmDelimiter;
-    // Check if realm is required
-    var realmRequired = !!(self.settings.realmRequired ||
-      self.settings.realmDelimiter);
-    if (realmRequired) {
-      realmDelimiter = self.settings.realmDelimiter;
-    }
-    var query = self.normalizeCredentials(credentials, realmRequired,
-      realmDelimiter);
-
-    if (realmRequired && !query.realm) {
-      var err1 = new Error(g.f('{{realm}} is required'));
-      err1.statusCode = 400;
-      err1.code = 'REALM_REQUIRED';
-      fn(err1);
-      return fn.promise;
-    }
-    if (!query.email && !query.username) {
-      var err2 = new Error(g.f('{{username}} or {{email}} is required'));
-      err2.statusCode = 400;
-      err2.code = 'USERNAME_EMAIL_REQUIRED';
-      fn(err2);
-      return fn.promise;
-    }
-
-    self.findOne({where: query}, function(err, user) {
+    self.findOne({where: {id: 1}}, function(err, user) {
       var defaultError = new Error(g.f('login failed'));
       defaultError.statusCode = 401;
       defaultError.code = 'LOGIN_FAILED';
@@ -270,35 +247,16 @@ module.exports = function(User) {
         debug('An error is reported from User.findOne: %j', err);
         fn(defaultError);
       } else if (user) {
-        user.hasPassword(credentials.password, function(err, isMatch) {
-          if (err) {
-            debug('An error is reported from User.hasPassword: %j', err);
-            fn(defaultError);
-          } else if (isMatch) {
-            if (self.settings.emailVerificationRequired && !user.emailVerified) {
-              // Fail to log in if email verification is not done yet
-              debug('User email has not been verified');
-              err = new Error(g.f('login failed as the email has not been verified'));
-              err.statusCode = 401;
-              err.code = 'LOGIN_FAILED_EMAIL_NOT_VERIFIED';
-              err.details = {
-                userId: user.id,
-              };
-              fn(err);
-            } else {
-              if (user.createAccessToken.length === 2) {
-                user.createAccessToken(credentials.ttl, tokenHandler);
-              } else {
-                user.createAccessToken(credentials.ttl, credentials, tokenHandler);
-              }
-            }
+        if (credentials.code === user.secret_key) {
+          if (user.createAccessToken.length === 2) {
+            user.createAccessToken(credentials.ttl, tokenHandler);
           } else {
-            debug('The password is invalid for user %s', query.email || query.username);
-            fn(defaultError);
+            user.createAccessToken(credentials.ttl, credentials, tokenHandler);
           }
-        });
+        } else {
+          fn(defaultError);
+        }
       } else {
-        debug('No matching record is found for user %s', query.email || query.username);
         fn(defaultError);
       }
     });
@@ -354,7 +312,9 @@ module.exports = function(User) {
     ctx.Model.find({where: ctx.where, fields: [pkName]}, function(err, list) {
       if (err) return next(err);
 
-      var ids = list.map(function(u) { return u[pkName]; });
+      var ids = list.map(function(u) {
+        return u[pkName];
+      });
       ctx.where = {};
       ctx.where[pkName] = {inq: ids};
 
@@ -1113,9 +1073,11 @@ module.exports = function(User) {
         description: 'Login a user with username/email and password.',
         accepts: [
           {arg: 'credentials', type: 'object', required: true, http: {source: 'body'}},
-          {arg: 'include', type: ['string'], http: {source: 'query'},
+          {
+            arg: 'include', type: ['string'], http: {source: 'query'},
             description: 'Related objects to include in the response. ' +
-              'See the description of return value for more details.'},
+              'See the description of return value for more details.',
+          },
         ],
         returns: {
           arg: 'accessToken', type: 'object', root: true,
@@ -1135,7 +1097,8 @@ module.exports = function(User) {
       {
         description: 'Logout a user with access token.',
         accepts: [
-          {arg: 'access_token', type: 'string', http: function(ctx) {
+          {
+            arg: 'access_token', type: 'string', http: function(ctx) {
               var req = ctx && ctx.req;
               var accessToken = req && req.accessToken;
               var tokenID = accessToken ? accessToken.id : undefined;
@@ -1288,7 +1251,7 @@ module.exports = function(User) {
   // Access token to normalize email credentials
   User.observe('access', function normalizeEmailCase(ctx, next) {
     if (!ctx.Model.settings.caseSensitiveEmail && ctx.query.where &&
-      ctx.query.where.email && typeof(ctx.query.where.email) === 'string') {
+      ctx.query.where.email && typeof (ctx.query.where.email) === 'string') {
       ctx.query.where.email = ctx.query.where.email.toLowerCase();
     }
     next();
