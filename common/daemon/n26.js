@@ -9,6 +9,7 @@ module.exports = {
   startDaemon: () => {
     const minuteTomillisecond = 60 * 1000;
     const delay = config.n26.minuteDelay * minuteTomillisecond;
+    let accessToken;
 
     setInterval(importTransactions, delay);
 
@@ -18,11 +19,29 @@ module.exports = {
       let from = Date.now() - delay;
       let to = Date.now();
 
-      new N26(login, password)
-        .then(account => account.transactions({from: from, to: to})
-          .then(transactions => postTransactions(transactions)))
-        .catch((err) => {
-          console.debug(err);
+      const loginAPIrequest = {
+        method: 'POST',
+        uri: api.protocol + '://' + api.host + ':' + api.port + '/api/Users/login',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: {
+          'code': api.secret_key,
+        },
+        json: true, // Automatically stringifies the body to JSON
+      };
+
+      request(loginAPIrequest)
+        .then((response) => {
+          accessToken = response.id;
+
+          new N26(login, password)
+            .then(account => account.transactions({from: from, to: to})
+              .then(transactions => postTransactions(transactions)))
+            .catch((err) => {
+              console.debug(err);
+            });
         });
     }
 
@@ -35,7 +54,7 @@ module.exports = {
 
       const apiOptions = {
         method: 'POST',
-        uri: api.protocol + '://' + api.host + ':' + api.port + '/api/Operations',
+        uri: api.protocol + '://' + api.host + ':' + api.port + '/api/Operations?access_token=' + accessToken,
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
