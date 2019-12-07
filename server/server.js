@@ -18,8 +18,9 @@ app.start = function() {
       console.log('Browse your REST API at %s%s', baseUrl, explorerPath);
     }
 
+    /* N26 daemon disable because auth failed */
     if (process.env.NODE_ENV === 'production') {
-      n26.startDaemon();
+    //   n26.startDaemon();
     }
   });
 };
