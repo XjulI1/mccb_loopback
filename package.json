@@ -24,7 +24,7 @@
     "n26": "^1.5.3",
     "pm2": "^3.2.9",
     "request-promise": "^4.2.2",
-    "sequelize": "^3.30.2",
+    "sequelize": "^5.15.1",
     "serve-favicon": "^2.0.1",
     "strong-error-handler": "^2.0.0"
   },
