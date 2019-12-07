@@ -40,6 +40,9 @@ jobs:
     environment:
       NODE_ENV: production
     steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "08:62:80:6b:95:64:23:e3:ff:5b:64:9c:d8:eb:1b:cb"
       - attach_workspace:
           at: /tmp
       - deploy:
