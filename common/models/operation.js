@@ -53,9 +53,8 @@ module.exports = function(Operation) {
     let SQLrequest = 'SELECT ROUND(SUM(MontantOp), 2) as MonthNegative ' +
       'FROM Operation ' +
       'NATURAL JOIN Compte ' +
-      'WHERE DateOp ' +
-      'BETWEEN "' + YearNumber + '-' + MonthNumber + '-01" ' +
-      'AND "' + (MonthNumber === 12 ? YearNumber + 1 : YearNumber) + '-' + (MonthNumber === 12 ? 1 : MonthNumber + 1) + '-01" ' +
+      'WHERE MONTH(DateOp) = ' + MonthNumber + ' ' +
+      'AND YEAR(DateOp) = ' + YearNumber + ' ' +
       'AND Compte.IDuser = ' + UserID + ' ' +
       'AND IDcat IN ' +
       '(SELECT IDcat FROM Categorie WHERE Stats = 1 AND IDuser IN (0, ' + UserID + '))';
@@ -73,9 +72,8 @@ module.exports = function(Operation) {
     let SQLrequest = 'SELECT ROUND(SUM(MontantOp), 2) as TotalMonth, IDcat ' +
       'FROM Operation ' +
       'NATURAL JOIN Compte ' +
-      'WHERE DateOp ' +
-      'BETWEEN "' + YearNumber + '-' + MonthNumber + '-01" ' +
-      'AND "' + (MonthNumber === 12 ? YearNumber + 1 : YearNumber) + '-' + (MonthNumber === 12 ? 1 : MonthNumber + 1) + '-01" ' +
+      'WHERE MONTH(DateOp) = ' + MonthNumber + ' ' +
+      'AND YEAR(DateOp) = ' + YearNumber + ' ' +
       'AND Compte.IDuser = ' + UserID + ' ' +
       'AND IDcat IN ' +
       '(SELECT IDcat FROM Categorie WHERE Stats = 1 AND IDuser IN (0, ' + UserID + ')) ' +
