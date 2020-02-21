@@ -6,7 +6,7 @@ defaults: &defaults
     TZ: "/usr/share/zoneinfo/Europe/Paris"
     NODE_ENV: test
   docker:
-    - image: circleci/node:8.9.4
+    - image: circleci/node:12.14.0
 
 jobs:
   dependencies:
