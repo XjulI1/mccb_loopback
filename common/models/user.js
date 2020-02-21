@@ -10,18 +10,18 @@
 /* eslint max-len: "off" */
 
 'use strict';
-var g = require('loopback/lib/globalize.js');
-var isEmail = require('isemail');
-var loopback = require('loopback/lib/loopback');
-var utils = require('loopback/lib/utils');
-var path = require('path');
-var qs = require('querystring');
-var SALT_WORK_FACTOR = 10;
-var crypto = require('crypto');
+const g = require('loopback/lib/globalize.js');
+const isEmail = require('isemail');
+const loopback = require('loopback/lib/loopback');
+const utils = require('loopback/lib/utils');
+const path = require('path');
+const qs = require('querystring');
+const SALT_WORK_FACTOR = 10;
+const crypto = require('crypto');
 // bcrypt's max length is 72 bytes;
 // See https://github.com/kelektiv/node.bcrypt.js/blob/45f498ef6dc6e8234e58e07834ce06a50ff16352/src/node_blf.h#L59
-var MAX_PASSWORD_LENGTH = 72;
-var bcrypt;
+const MAX_PASSWORD_LENGTH = 72;
+let bcrypt;
 try {
   // Try the native module first
   bcrypt = require('bcrypt');
@@ -34,12 +34,12 @@ try {
   bcrypt = require('bcryptjs');
 }
 
-var DEFAULT_TTL = 1209600; // 2 weeks in seconds
-var DEFAULT_RESET_PW_TTL = 15 * 60; // 15 mins in seconds
-var DEFAULT_MAX_TTL = 31556926; // 1 year in seconds
-var assert = require('assert');
+const DEFAULT_TTL = 1209600; // 2 weeks in seconds
+const DEFAULT_RESET_PW_TTL = 15 * 60; // 15 mins in seconds
+const DEFAULT_MAX_TTL = 31556926; // 1 year in seconds
+const assert = require('assert');
 
-var debug = require('debug')('loopback:user');
+const debug = require('debug')('loopback:user');
 
 /**
  * Built-in User model.
@@ -125,18 +125,18 @@ module.exports = function(User) {
       tokenData = {};
     }
 
-    var userSettings = this.constructor.settings;
+    const userSettings = this.constructor.settings;
     tokenData.ttl = Math.min(tokenData.ttl || userSettings.ttl, userSettings.maxTTL);
     this.accessTokens.create(tokenData, options, cb);
     return cb.promise;
   };
 
   function splitPrincipal(name, realmDelimiter) {
-    var parts = [null, name];
+    const parts = [null, name];
     if (!realmDelimiter) {
       return parts;
     }
-    var index = name.indexOf(realmDelimiter);
+    const index = name.indexOf(realmDelimiter);
     if (index !== -1) {
       parts[0] = name.substring(0, index);
       parts[1] = name.substring(index + realmDelimiter.length);
@@ -152,7 +152,7 @@ module.exports = function(User) {
    * @returns {Object} The normalized credential object
    */
   User.normalizeCredentials = function(credentials, realmRequired, realmDelimiter) {
-    var query = {};
+    const query = {};
     credentials = credentials || {};
     if (!realmRequired) {
       if (credentials.email) {
@@ -164,7 +164,7 @@ module.exports = function(User) {
       if (credentials.realm) {
         query.realm = credentials.realm;
       }
-      var parts;
+      let parts;
       if (credentials.email) {
         parts = splitPrincipal(credentials.email, realmDelimiter);
         query.email = parts[1];
@@ -207,7 +207,7 @@ module.exports = function(User) {
    */
 
   User.login = function(credentials, include, fn) {
-    var self = this;
+    const self = this;
     if (typeof include === 'function') {
       fn = include;
       include = undefined;
@@ -224,7 +224,7 @@ module.exports = function(User) {
       include = include.toLowerCase();
     }
     self.findOne({where: {id: 1}}, function(err, user) {
-      var defaultError = new Error(g.f('login failed'));
+      const defaultError = new Error(g.f('login failed'));
       defaultError.statusCode = 401;
       defaultError.code = 'LOGIN_FAILED';
 
@@ -280,7 +280,7 @@ module.exports = function(User) {
   User.logout = function(tokenId, fn) {
     fn = fn || utils.createPromiseCallback();
 
-    var err;
+    let err;
     if (!tokenId) {
       err = new Error(g.f('{{accessToken}} is required to logout'));
       err.statusCode = 401;
@@ -306,12 +306,12 @@ module.exports = function(User) {
     // Do nothing when the access control was disabled for this user model.
     if (!ctx.Model.relations.accessTokens) return next();
 
-    var AccessToken = ctx.Model.relations.accessTokens.modelTo;
-    var pkName = ctx.Model.definition.idName() || 'id';
+    const AccessToken = ctx.Model.relations.accessTokens.modelTo;
+    const pkName = ctx.Model.definition.idName() || 'id';
     ctx.Model.find({where: ctx.where, fields: [pkName]}, function(err, list) {
       if (err) return next(err);
 
-      var ids = list.map(function(u) {
+      const ids = list.map(function(u) {
         return u[pkName];
       });
       ctx.where = {};
@@ -658,9 +658,9 @@ module.exports = function(User) {
     }
     cb = cb || utils.createPromiseCallback();
 
-    var user = this;
-    var userModel = this.constructor;
-    var registry = userModel.registry;
+    const user = this;
+    const userModel = this.constructor;
+    const registry = userModel.registry;
     verifyOptions = Object.assign({}, verifyOptions);
     // final assertion is performed once all options are assigned
     assert(typeof verifyOptions === 'object',
@@ -681,19 +681,19 @@ module.exports = function(User) {
     verifyOptions.mailer = verifyOptions.mailer || userModel.email ||
       registry.getModelByType(loopback.Email);
 
-    var pkName = userModel.definition.idName() || 'id';
+    const pkName = userModel.definition.idName() || 'id';
     verifyOptions.redirect = verifyOptions.redirect || '/';
-    var defaultTemplate = path.join(__dirname, '..', '..', 'templates', 'verify.ejs');
+    const defaultTemplate = path.join(__dirname, '..', '..', 'templates', 'verify.ejs');
     verifyOptions.template = path.resolve(verifyOptions.template || defaultTemplate);
     verifyOptions.user = user;
     verifyOptions.protocol = verifyOptions.protocol || 'http';
 
-    var app = userModel.app;
+    const app = userModel.app;
     verifyOptions.host = verifyOptions.host || (app && app.get('host')) || 'localhost';
     verifyOptions.port = verifyOptions.port || (app && app.get('port')) || 3000;
     verifyOptions.restApiRoot = verifyOptions.restApiRoot || (app && app.get('restApiRoot')) || '/api';
 
-    var displayPort = (
+    const displayPort = (
       (verifyOptions.protocol === 'http' && verifyOptions.port == '80') ||
       (verifyOptions.protocol === 'https' && verifyOptions.port == '443')
     ) ? '' : ':' + verifyOptions.port;
@@ -704,14 +704,14 @@ module.exports = function(User) {
         throw new Error(
           'Cannot build user verification URL, ' +
           'the default confirm method is not public. ' +
-          'Please provide the URL in verifyOptions.verifyHref.'
+          'Please provide the URL in verifyOptions.verifyHref.',
         );
       }
 
       const urlPath = joinUrlPath(
         verifyOptions.restApiRoot,
         userModel.http.path,
-        confirmMethod.http.path
+        confirmMethod.http.path,
       );
 
       verifyOptions.verifyHref =
@@ -734,7 +734,7 @@ module.exports = function(User) {
     assertVerifyOptions(verifyOptions);
 
     // argument "options" is passed depending on verifyOptions.generateVerificationToken function requirements
-    var tokenGenerator = verifyOptions.generateVerificationToken;
+    const tokenGenerator = verifyOptions.generateVerificationToken;
     if (tokenGenerator.length == 3) {
       tokenGenerator(user, options, addTokenToUserAndSave);
     } else {
@@ -762,7 +762,7 @@ module.exports = function(User) {
       verifyOptions.text = verifyOptions.text.replace(/\{href\}/g, verifyOptions.verifyHref);
 
       // argument "options" is passed depending on templateFn function requirements
-      var templateFn = verifyOptions.templateFn;
+      const templateFn = verifyOptions.templateFn;
       if (templateFn.length == 3) {
         templateFn(verifyOptions, options, setHtmlContentAndSend);
       } else {
@@ -779,7 +779,7 @@ module.exports = function(User) {
         delete verifyOptions.template;
 
         // argument "options" is passed depending on Email.send function requirements
-        var Email = verifyOptions.mailer;
+        const Email = verifyOptions.mailer;
         if (Email.send.length == 3) {
           Email.send(verifyOptions, options, handleAfterSend);
         } else {
@@ -811,8 +811,8 @@ module.exports = function(User) {
   }
 
   function createVerificationEmailBody(verifyOptions, options, cb) {
-    var template = loopback.template(verifyOptions.template);
-    var body = template(verifyOptions);
+    const template = loopback.template(verifyOptions.template);
+    const body = template(verifyOptions);
     cb(null, body);
   }
 
@@ -890,11 +890,11 @@ module.exports = function(User) {
 
   User.resetPassword = function(options, cb) {
     cb = cb || utils.createPromiseCallback();
-    var UserModel = this;
-    var ttl = UserModel.settings.resetPasswordTokenTTL || DEFAULT_RESET_PW_TTL;
+    const UserModel = this;
+    const ttl = UserModel.settings.resetPasswordTokenTTL || DEFAULT_RESET_PW_TTL;
     options = options || {};
     if (typeof options.email !== 'string') {
-      var err = new Error(g.f('Email is required'));
+      const err = new Error(g.f('Email is required'));
       err.statusCode = 400;
       err.code = 'EMAIL_REQUIRED';
       cb(err);
@@ -908,7 +908,7 @@ module.exports = function(User) {
     } catch (err) {
       return cb(err);
     }
-    var where = {
+    const where = {
       email: options.email,
     };
     if (options.realm) {
@@ -969,12 +969,12 @@ module.exports = function(User) {
    */
   User.hashPassword = function(plain) {
     this.validatePassword(plain);
-    var salt = bcrypt.genSaltSync(this.settings.saltWorkFactor || SALT_WORK_FACTOR);
+    const salt = bcrypt.genSaltSync(this.settings.saltWorkFactor || SALT_WORK_FACTOR);
     return bcrypt.hashSync(plain, salt);
   };
 
   User.validatePassword = function(plain) {
-    var err;
+    let err;
     if (!plain || typeof plain !== 'string') {
       err = new Error(g.f('Invalid password.'));
       err.code = 'INVALID_PASSWORD';
@@ -983,7 +983,7 @@ module.exports = function(User) {
     }
 
     // Bcrypt only supports up to 72 bytes; the rest is silently dropped.
-    var len = Buffer.byteLength(plain, 'utf8');
+    const len = Buffer.byteLength(plain, 'utf8');
     if (len > MAX_PASSWORD_LENGTH) {
       err = new Error(g.f('The password entered was too long. Max length is %d (entered %d)',
         MAX_PASSWORD_LENGTH, len));
@@ -1002,20 +1002,20 @@ module.exports = function(User) {
     if (!Array.isArray(userIds) || !userIds.length)
       return process.nextTick(cb);
 
-    var accessTokenRelation = this.relations.accessTokens;
+    const accessTokenRelation = this.relations.accessTokens;
     if (!accessTokenRelation)
       return process.nextTick(cb);
 
-    var AccessToken = accessTokenRelation.modelTo;
-    var query = {userId: {inq: userIds}};
-    var tokenPK = AccessToken.definition.idName() || 'id';
+    const AccessToken = accessTokenRelation.modelTo;
+    const query = {userId: {inq: userIds}};
+    const tokenPK = AccessToken.definition.idName() || 'id';
     if (options.accessToken && tokenPK in options.accessToken) {
       query[tokenPK] = {neq: options.accessToken[tokenPK]};
     }
     // add principalType in AccessToken.query if using polymorphic relations
     // between AccessToken and User
-    var relatedUser = AccessToken.relations.user;
-    var isRelationPolymorphic = relatedUser && relatedUser.polymorphic &&
+    const relatedUser = AccessToken.relations.user;
+    const isRelationPolymorphic = relatedUser && relatedUser.polymorphic &&
       !relatedUser.modelTo;
     if (isRelationPolymorphic) {
       query.principalType = this.modelName;
@@ -1030,7 +1030,7 @@ module.exports = function(User) {
   User.setup = function() {
     // We need to call the base class's setup method
     User.base.setup.call(this);
-    var UserModel = this;
+    const UserModel = this;
 
     // max ttl
     this.settings.maxTTL = this.settings.maxTTL || DEFAULT_MAX_TTL;
@@ -1059,7 +1059,7 @@ module.exports = function(User) {
 
     // Make sure emailVerified is not set by creation
     UserModel.beforeRemote('create', function(ctx, user, next) {
-      var body = ctx.req.body;
+      const body = ctx.req.body;
       if (body && body.emailVerified) {
         body.emailVerified = false;
       }
@@ -1088,7 +1088,7 @@ module.exports = function(User) {
               '{{(`include=user`)}}\n\n'),
         },
         http: {verb: 'post'},
-      }
+      },
     );
 
     UserModel.remoteMethod(
@@ -1098,9 +1098,9 @@ module.exports = function(User) {
         accepts: [
           {
             arg: 'access_token', type: 'string', http: function(ctx) {
-              var req = ctx && ctx.req;
-              var accessToken = req && req.accessToken;
-              var tokenID = accessToken ? accessToken.id : undefined;
+              const req = ctx && ctx.req;
+              const accessToken = req && req.accessToken;
+              const tokenID = accessToken ? accessToken.id : undefined;
 
               return tokenID;
             }, description: 'Do not supply this argument, it is automatically extracted ' +
@@ -1108,7 +1108,7 @@ module.exports = function(User) {
           },
         ],
         http: {verb: 'all'},
-      }
+      },
     );
 
     UserModel.remoteMethod(
@@ -1120,7 +1120,7 @@ module.exports = function(User) {
           {arg: 'options', type: 'object', http: 'optionsFromRequest'},
         ],
         http: {verb: 'post'},
-      }
+      },
     );
 
     UserModel.remoteMethod(
@@ -1133,7 +1133,7 @@ module.exports = function(User) {
           {arg: 'redirect', type: 'string'},
         ],
         http: {verb: 'get', path: '/confirm'},
-      }
+      },
     );
 
     UserModel.remoteMethod(
@@ -1144,7 +1144,7 @@ module.exports = function(User) {
           {arg: 'options', type: 'object', required: true, http: {source: 'body'}},
         ],
         http: {verb: 'post', path: '/reset'},
-      }
+      },
     );
 
     UserModel.remoteMethod(
@@ -1158,7 +1158,7 @@ module.exports = function(User) {
           {arg: 'options', type: 'object', http: 'optionsFromRequest'},
         ],
         http: {verb: 'POST', path: '/change-password'},
-      }
+      },
     );
 
     const setPasswordScopes = UserModel.settings.restrictResetPasswordTokenScope ?
@@ -1175,7 +1175,7 @@ module.exports = function(User) {
         ],
         accessScopes: setPasswordScopes,
         http: {verb: 'POST', path: '/reset-password'},
-      }
+      },
     );
 
     function getUserIdFromRequestContext(ctx) {
@@ -1278,7 +1278,7 @@ module.exports = function(User) {
         // This is a programmer's error, use the default status code 500
         return next(new Error(
           'Invalid use of "options.setPassword". Only "password" can be ' +
-          'changed when using this option.'
+          'changed when using this option.',
         ));
       }
 
@@ -1291,7 +1291,7 @@ module.exports = function(User) {
 
     const err = new Error(
       'Changing user password via patch/replace API is not allowed. ' +
-      'Use changePassword() or setPassword() instead.'
+      'Use changePassword() or setPassword() instead.',
     );
     err.statusCode = 401;
     err.code = 'PASSWORD_CHANGE_NOT_ALLOWED';
@@ -1302,8 +1302,8 @@ module.exports = function(User) {
     if (ctx.isNewInstance) return next();
     if (!ctx.where && !ctx.instance) return next();
 
-    var pkName = ctx.Model.definition.idName() || 'id';
-    var where = ctx.where;
+    const pkName = ctx.Model.definition.idName() || 'id';
+    let where = ctx.where;
     if (!where) {
       where = {};
       where[pkName] = ctx.instance[pkName];
@@ -1312,13 +1312,13 @@ module.exports = function(User) {
     ctx.Model.find({where: where}, ctx.options, function(err, userInstances) {
       if (err) return next(err);
       ctx.hookState.originalUserData = userInstances.map(function(u) {
-        var user = {};
+        const user = {};
         user[pkName] = u[pkName];
         user.email = u.email;
         user.password = u.password;
         return user;
       });
-      var emailChanged;
+      let emailChanged;
       if (ctx.instance) {
         // Check if map does not return an empty array
         // Fix server crashes when try to PUT a non existent id
@@ -1348,15 +1348,15 @@ module.exports = function(User) {
     if (!ctx.instance && !ctx.data) return next();
     if (!ctx.hookState.originalUserData) return next();
 
-    var pkName = ctx.Model.definition.idName() || 'id';
-    var newEmail = (ctx.instance || ctx.data).email;
-    var newPassword = (ctx.instance || ctx.data).password;
+    const pkName = ctx.Model.definition.idName() || 'id';
+    const newEmail = (ctx.instance || ctx.data).email;
+    const newPassword = (ctx.instance || ctx.data).password;
 
     if (!newEmail && !newPassword) return next();
 
     if (ctx.options.preserveAccessTokens) return next();
 
-    var userIdsToExpire = ctx.hookState.originalUserData.filter(function(u) {
+    const userIdsToExpire = ctx.hookState.originalUserData.filter(function(u) {
       return (newEmail && u.email !== newEmail) ||
         (newPassword && u.password !== newPassword);
     }).map(function(u) {
@@ -1367,7 +1367,7 @@ module.exports = function(User) {
 };
 
 function emailValidator(err, done) {
-  var value = this.email;
+  const value = this.email;
   if (value == null)
     return;
   if (typeof value !== 'string')
@@ -1378,9 +1378,9 @@ function emailValidator(err, done) {
 }
 
 function joinUrlPath(args) {
-  var result = arguments[0];
-  for (var ix = 1; ix < arguments.length; ix++) {
-    var next = arguments[ix];
+  let result = arguments[0];
+  for (let ix = 1; ix < arguments.length; ix++) {
+    const next = arguments[ix];
     result += result[result.length - 1] === '/' && next[0] === '/' ?
       next.slice(1) : next;
   }

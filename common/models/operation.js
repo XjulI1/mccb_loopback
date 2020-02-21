@@ -39,7 +39,7 @@ module.exports = function(Operation) {
 
       Operation.dataSource.connector.executeSQL(sqlNotChecked, [], [], (err, data) => {
         checkedTotal.map((objectCheck) => {
-          let filterCompte = data.filter(object => object.IDCompte === objectCheck.IDCompte);
+          const filterCompte = data.filter(object => object.IDCompte === objectCheck.IDCompte);
 
           Object.assign(objectCheck, {TotalNotChecked: (filterCompte[0] || 0)['TotalNotChecked']});
         });
@@ -69,7 +69,7 @@ module.exports = function(Operation) {
   };
 
   Operation.sumCategoriesByUserByMonth = function(UserID, MonthNumber, YearNumber, cb) {
-    let SQLrequest = 'SELECT ROUND(SUM(MontantOp), 2) as TotalMonth, IDcat ' +
+    const SQLrequest = 'SELECT ROUND(SUM(MontantOp), 2) as TotalMonth, IDcat ' +
       'FROM Operation ' +
       'NATURAL JOIN Compte ' +
       'WHERE MONTH(DateOp) = ' + MonthNumber + ' ' +

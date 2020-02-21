@@ -15,7 +15,7 @@ module.exports = function(Operationrecurrente) {
 
       switch (opRec.Frequence) {
         case 3:
-          if (currentDate - opLastDate >  15 * millisecondDay) {
+          if (currentDate - opLastDate > 15 * millisecondDay) {
             opLastDate.setMonth(opLastDate.getMonth() + 1);
 
             insertNewOpFromRec(opLastDate, opRec, list, cbDone);
@@ -48,8 +48,10 @@ module.exports = function(Operationrecurrente) {
             [],
             (err, _) => {
               goToNext(list, cbDone);
-            });
-        });
+            },
+          );
+        },
+      );
     };
 
     const goToNext = function(list, cbDone) {

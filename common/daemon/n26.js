@@ -2,8 +2,8 @@
 
 const config = require('./config/n26');
 const api = require('./config/api');
-let N26 = require('n26');
-let request = require('request-promise');
+const N26 = require('n26');
+const request = require('request-promise');
 
 module.exports = {
   startDaemon: () => {
@@ -14,10 +14,10 @@ module.exports = {
     setInterval(importTransactions, delay);
 
     function importTransactions() {
-      let login = config.n26.login;
-      let password = config.n26.password;
-      let from = Date.now() - delay;
-      let to = Date.now();
+      const login = config.n26.login;
+      const password = config.n26.password;
+      const from = Date.now() - delay;
+      const to = Date.now();
 
       const loginAPIrequest = {
         method: 'POST',
